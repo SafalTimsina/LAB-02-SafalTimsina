@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Information</title>
+  <script>
+    function fetchUserInformation() {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://jsonplaceholder.typicode.com/users/1', true);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            reject(Error(xhr.statusText));
+          }
+        };
+        xhr.onerror = function() {
+          reject(Error('Network Error'));
+        };
+        xhr.send();
+      });
+    }
+
+    function displayUserInformation() {
+      fetchUserInformation()
+        .then(function(user) {
+          var userElement = document.getElementById('user');
+          userElement.innerHTML = 'Name: ' + user.name + '<br>Email: ' + user.email + '<br> UserName:  ' +user.username;
+        })
+        .catch(function(error) {
+          console.log('Error:', error);
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>User Information</h1>
+  <div id="user"></div>
+  <button onclick="displayUserInformation()">Fetch User Information</button>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Information Form</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('userForm');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get form field values
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+
+        // Validate form fields using RegEx
+        const nameRegex = /^[A-Za-z]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+          alert('Please enter valid first and last names.');
+          return;
+        }
+
+        if (!emailRegex.test(email)) {
+          alert('Please enter a valid email address.');
+          return;
+        }
+
+        // Create user information object
+        const userInfo = {
+          first_name: firstName,
+          last_name: lastName,
+          email: email
+        };
+
+        // Send POST request to the API
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://reqres.in/api/users', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        const promise = new Promise(function(resolve, reject) {
+          xhr.onload = function() {
+            if (xhr.status === 201) {
+              resolve(xhr.responseText);
+            } else {
+              reject(Error(xhr.statusText));
+            }
+          };
+
+          xhr.onerror = function() {
+            reject(Error('Network Error'));
+          };
+        });
+
+        promise
+          .then(function(response) {
+            alert('User information submitted successfully.');
+          })
+          .catch(function(error) {
+            alert('Error submitting user information. Please try again.');
+            console.log('Error:', error);
+          });
+
+        xhr.send(JSON.stringify(userInfo));
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>User Information Form</h1>
+  <form id="userForm">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstName" required><br>
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="lastName" required><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

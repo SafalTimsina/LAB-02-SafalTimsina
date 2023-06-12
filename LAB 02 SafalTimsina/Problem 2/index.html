@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Information Form</title>
+  <script>
+    function fetchUserInformation() {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://reqres.in/api/users/2', true);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.responseText).data);
+          } else {
+            reject(Error(xhr.statusText));
+          }
+        };
+        xhr.onerror = function() {
+          reject(Error('Network Error'));
+        };
+        xhr.send();
+      });
+    }
+
+    function populateForm(user) {
+      document.getElementById('name').value = user.first_name + ' ' + user.last_name;
+      document.getElementById('email').value = user.email;
+      document.getElementById('avatar').src = user.avatar;
+    }
+
+    function initiateRequest() {
+      fetchUserInformation()
+        .then(function(user) {
+          populateForm(user);
+        })
+        .catch(function(error) {
+          console.log('Error:', error);
+          document.getElementById('error').textContent = 'An error occurred while fetching user information.';
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>User Information Form</h1>
+  <form>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" disabled><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" disabled><br>
+    <label for="avatar">Avatar:</label>
+    <img id="avatar" src="" alt="Avatar" width="100"><br>
+    <button type="button" onclick="initiateRequest()">Fetch User Information</button>
+  </form>
+  <p id="error" style="color: red;"></p>
+</body>
+</html>
